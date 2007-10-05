@@ -5,7 +5,7 @@ use strict;
 use Carp;
 use TAP::Parser::YAMLish::Writer;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 our @ISA     = qw( Test::Builder );
 
 use constant KNOWN_TAP_VERSION => 13;
@@ -41,19 +41,18 @@ sub caller {
 # Add YAML to OK
 sub ok {
     my ( $self, $test, $name ) = @_;
-    # Oops: now ok gets caller wrong.
     my $ok = $self->SUPER::ok( $test, $name );
     if ( !$ok && _should_yaml() ) {
-        my $writer = sub {
-            $self->_print( '  ' . $_[0] );
-        };
         my ( $pack, $file, $line ) = $self->caller( -1 );
-        my $data = {
-            file => $file,
-            line => $line,
-        };
-        my $yaml = TAP::Parser::YAMLish::Writer->new;
-        $yaml->write( $data, $writer );
+        TAP::Parser::YAMLish::Writer->new->write(
+            {
+                file => $file,
+                line => $line,
+            },
+            sub {
+                $self->_print( '  ' . $_[0] );
+            }
+        );
     }
     return $ok;
 }
@@ -67,7 +66,7 @@ Test::More::Diagnostic - Conditionally add YAML diagnostics to Test::More's outp
 
 =head1 VERSION
 
-This document describes Test::More::Diagnostic version 0.1
+This document describes Test::More::Diagnostic version 0.2
 
 =head1 SYNOPSIS
 
@@ -114,16 +113,6 @@ Overwridden from Test::Builder. Adjusts the stack depth to account for our inter
 =item C<< ok >>
 
 Overwridden from Test::Builder. Adds basic YAML diagnostic output to failing tests.
-
-=back
-
-=head1 DIAGNOSTICS
-
-=over
-
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Description of error here]
 
 =back
 

@@ -1,6 +1,6 @@
 ---
 name: Test-More-Diagnostic
-version: 0.1
+version: 0.2
 author:
   - 'Andy Armstrong <andy@hexten.net>'
 abstract: Conditionally add YAML diagnostics to Test::More's output
@@ -13,7 +13,7 @@ requires:
 provides:
   Test::More::Diagnostic:
     file: lib/Test/More/Diagnostic.pm
-    version: 0.1
+    version: 0.2
 generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
